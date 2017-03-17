@@ -448,29 +448,17 @@ public class NoteRichEditor extends AppCompatActivity {
     }
 
     /******************************* 处理【分享为图片的activity】*****************************/
-    public static Bitmap convertViewToBitmap(View webView) {
+    public static Bitmap convertViewToBitmap(View view) {
 //        view.destroyDrawingCache();
 //        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
 //                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 //        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
 //        view.setDrawingCacheEnabled(true);
 //        return view.getDrawingCache(true);
-        webView.measure(View.MeasureSpec.makeMeasureSpec(
-                View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        webView.layout(0, 0, webView.getMeasuredWidth(),
-                webView.getMeasuredHeight());
-        webView.setDrawingCacheEnabled(true);
-        webView.buildDrawingCache();
-        Bitmap bm = Bitmap.createBitmap(webView.getMeasuredWidth(),
-                webView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
-        Canvas bigcanvas = new Canvas(bm);
-        Paint paint = new Paint();
-        int iHeight = bm.getHeight();
-        bigcanvas.drawBitmap(bm, 0, iHeight, paint);
-        webView.draw(bigcanvas);
-        return bm;
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
     private void ShowPicActivity(){
         // 跳转至图片预览
