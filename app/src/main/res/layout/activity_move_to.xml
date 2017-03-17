@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="108dp"
+        android:background="@color/mainColor1" />
+
+    <ImageView
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:src="@mipmap/btn_back_n" />
+
+    <TextView
+        android:layout_marginTop="5.625dp"
+        android:id="@+id/numberOfImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:text="5张照片"
+        android:textColor="@color/mainColor2"
+        android:textSize="14sp" />
+
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/header"
+        android:layout_marginStart="11.25dp"
+        android:layout_marginTop="11.25dp"
+        android:text="移动到" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/text"
+        android:padding="5.625dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+        android:id="@+id/imageThumbnailLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/numberOfImage"
+        android:layout_centerHorizontal="true"
+        android:clipToPadding="false"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/whiteBackground3"
+            android:layout_width="89dp"
+            android:layout_height="68.75dp"
+            android:layout_alignBottom="@+id/whiteBackground2"
+            android:layout_alignStart="@+id/whiteBackground2"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="4dp"
+            android:background="@color/subColor1"
+            android:elevation="4dp" />
+
+        <TextView
+            android:id="@+id/whiteBackground2"
+            android:layout_width="89dp"
+            android:layout_height="68.75dp"
+            android:layout_alignBottom="@+id/whiteBackground1"
+            android:layout_alignStart="@+id/whiteBackground1"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="4dp"
+            android:background="@color/subColor1"
+            android:elevation="6dp" />
+
+        <TextView
+            android:id="@+id/whiteBackground1"
+            android:layout_width="89dp"
+            android:layout_height="68.75dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/subColor1"
+            android:elevation="8dp" />
+
+        <ImageView
+            android:id="@+id/imageThumbnail"
+            android:scaleType="centerCrop"
+            android:layout_width="81dp"
+            android:layout_height="60.75dp"
+            android:layout_alignBottom="@id/whiteBackground1"
+            android:layout_alignStart="@id/whiteBackground1"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="4dp"
+            android:background="@color/colorAccent"
+            android:elevation="8dp" />
+    </RelativeLayout>
+</RelativeLayout>

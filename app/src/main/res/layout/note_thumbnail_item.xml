@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="11.25dp"
+    android:id="@+id/noteThumbnail"
+    android:background="@color/subColor1"
+    android:elevation="7dp"
+    android:padding="5dp"
+    android:layout_width="146.25dp"
+    android:layout_height="180dp">
+    <TextView
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/mainColor2"
+        android:id="@+id/noteThumbnailTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:textSize="12sp"
+        android:textColor="@color/mainColor2"
+        android:layout_below="@id/noteThumbnailTitle"
+        android:background="@mipmap/underline"
+        android:id="@+id/noteThumbnailCreateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:textColor="@color/mainColor3"
+        android:layout_marginTop="10dp"
+        android:textSize="12sp"
+        android:layout_below="@id/noteThumbnailCreateTime"
+        android:id="@+id/noteThumbnailContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_below="@id/noteThumbnailContent"
+        android:id="@+id/noteThumbnailImage1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_below="@id/noteThumbnailContent"
+        android:id="@+id/noteThumbnailImage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_below="@id/noteThumbnailContent"
+        android:id="@+id/noteThumbnailImage3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:visibility="gone"
+        android:layout_below="@id/noteThumbnailContent"
+        android:src="@mipmap/ic_check_box_black_24dp"
+        android:id="@+id/noteThumbnailCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>
