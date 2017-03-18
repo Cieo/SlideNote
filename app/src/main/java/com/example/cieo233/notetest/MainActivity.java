@@ -28,6 +28,8 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import tess4j.Test;
+import tess4j.application_activity;
 
 public class MainActivity extends AppCompatActivity implements Interfaces.OnImageFolderClickedListener, Interfaces.OnImageClickedListener, View.OnClickListener {
     @BindView(R.id.toolbar)
