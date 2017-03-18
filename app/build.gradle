@@ -48,7 +48,7 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.rmtheis:tess-two:6.2.0'
-    compile project(':app-debug')
+//    compile project(':app-debug')
     compile files('libs/iText-2.0.8.jar')
     compile files('libs/core-render.jar')
 }
