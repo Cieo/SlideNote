@@ -1,23 +1,25 @@
 package com.example.cieo233.notetest;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 
 import com.example.cieo233.notetest.DrawableImageView.DrawOperation;
 import com.example.cieo233.notetest.DrawableImageView.DrawableImageView;
@@ -29,12 +31,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class NoteRichEditor extends AppCompatActivity {
+public class NoteRichEditor extends AppCompatActivity implements View.OnTouchListener{
     private static final int REQUEST_CODE_PICK_IMAGE = 1023;
     private static final int WIDTH_PAINT = 10;
     private static final int WIDTH_PEN = 5;
     private static final int WIDTH_MARK = 25;
     private static final int WIDTH_ERASE = 30;
+    private Context Activity_context;
 
 //    private static final String ALBUM_PATH = "file:///android_asset/";
     private static final String ALBUM_PATH = Environment.getExternalStorageDirectory() + "/download_test/";
@@ -62,16 +65,22 @@ public class NoteRichEditor extends AppCompatActivity {
     private LinearLayout PicViewer_activity;
     private ImageView Pic_ImageView;
 
+    public WebViewScreenshot webViewScreenshot;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_rich_editor);
+        Activity_context = getApplicationContext();
+
         mDrawableImageView = (DrawableImageView) findViewById(R.id.IdentifyImage);
         ImageShow = (RelativeLayout) findViewById(R.id.showImage);
         mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         MainEditor_activity = (RelativeLayout)findViewById(R.id.mainEditor);
         PicViewer_activity = (LinearLayout)findViewById(R.id.PicViewer);
         Pic_ImageView = (ImageView) findViewById(R.id.picView);
+        Pic_ImageView.setOnTouchListener(this);
+
 
         initEditor();
         initPainter();
@@ -409,7 +418,7 @@ public class NoteRichEditor extends AppCompatActivity {
 
     // 涂鸦图片后保存为新图片，并调用JavaScript接口更新对应的img元素。
     void updateImage() {
-        if (!mDrawableImageView.isInEditMode() || !mDrawableImageView.canUndo()) {
+        if (!mDrawableImageView.isInEditMode()) {
             return;
         }
         Log.d("update image", "in");
@@ -448,18 +457,7 @@ public class NoteRichEditor extends AppCompatActivity {
     }
 
     /******************************* 处理【分享为图片的activity】*****************************/
-    public static Bitmap convertViewToBitmap(View view) {
-//        view.destroyDrawingCache();
-//        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-//        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-//        view.setDrawingCacheEnabled(true);
-//        return view.getDrawingCache(true);
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
-    }
+
     private void ShowPicActivity(){
         // 跳转至图片预览
         findViewById(R.id.ShareAsPic).setOnClickListener(new View.OnClickListener() {
@@ -467,7 +465,6 @@ public class NoteRichEditor extends AppCompatActivity {
             public void onClick(View view) {
                 findViewById(R.id.ShareBox).setVisibility(View.GONE);
                 mBitmap = convertViewToBitmap(mEditor);
-//                mBitmap = Bitmap.createBitmap(mEditor.getWidth(), mEditor.getHeight(), Bitmap.Config.ARGB_8888);
 
                 if (mBitmap != null){
                     Pic_ImageView.setImageBitmap(mBitmap);
@@ -509,6 +506,19 @@ public class NoteRichEditor extends AppCompatActivity {
 //        mBitmap = Bitmap.createBitmap(editorView.getWidth(), editorView.getHeight(), Bitmap.Config.ARGB_8888);
 //        Log.i("-----------------------"+editorView.getResources(),"已成功保存");
 //    }
+    public Bitmap convertViewToBitmap(WebView view) {
+        /********************  短截屏  ********************/
+//        view.destroyDrawingCache();
+//        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+//        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+//        view.setDrawingCacheEnabled(true);
+//        return view.getDrawingCache(true);
+        /********************  短截屏END  ********************/
+
+        Bitmap bitmap = WebViewScreenshot.getWebViewBitmap(Activity_context, view);
+        return bitmap;
+    }
     public void saveFile (Bitmap bm, String fileName) throws IOException {
         File dirFile = new File(ALBUM_PATH);
         if (!dirFile.exists()){
@@ -541,7 +551,6 @@ public class NoteRichEditor extends AppCompatActivity {
         Log.i("--------跳转", "开始跳转");
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -618,6 +627,7 @@ public class NoteRichEditor extends AppCompatActivity {
 //            }
 //        });
     }
+
     @android.webkit.JavascriptInterface
     public void setTitleContents(final String str){
 //        runOnUiThread(new Runnable() {
@@ -628,6 +638,7 @@ public class NoteRichEditor extends AppCompatActivity {
 //            }
 //        });
     }
+
     @android.webkit.JavascriptInterface
     public void setDateContents(final String str){
 //        runOnUiThread(new Runnable() {
@@ -638,17 +649,25 @@ public class NoteRichEditor extends AppCompatActivity {
 //            }
 //        });
     }
+
     public String getHTMLContents(){
         mEditor.loadUrl("javascript:RE.getHTMLContents();");
         HTMLContents = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\">\n" + HTMLContents;
         return HTMLContents;
     }
+
     public String getDateContents(){
         mEditor.loadUrl("javascript:RE.getDateContents();");
         return DateContents;
     }
+
     public String getTitleContents(){
         mEditor.loadUrl("javascript:RE.getTitleContents();");
         return TitleContents;
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        return false;
     }
 }
