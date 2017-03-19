@@ -106,7 +106,7 @@
                     android:id="@+id/popUpMenuDelete"
                     android:layout_width="31.5dp"
                     android:layout_height="31.5dp"
-                    android:src="@mipmap/btn_delete_n_xxxhdpi" />
+                    android:src="@mipmap/btn_delete_n" />
             </RelativeLayout>
         </RelativeLayout>
 
@@ -148,7 +148,7 @@
 
             <LinearLayout
                 android:background="@drawable/switch_button"
-                android:id="@+id/jumpToSlide"
+                android:id="@+id/jumpToNote"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="49.5dp">
@@ -159,7 +159,7 @@
                 <TextView
                     android:textSize="18sp"
                     android:layout_marginStart="22.5dp"
-                    android:text="所有幻灯片"
+                    android:text="所有笔记"
                     android:textColor="@color/subColor1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -169,7 +169,7 @@
             <include layout="@layout/divide_line"/>
 
             <LinearLayout
-                android:id="@+id/addNewNotebook"
+                android:id="@+id/addNewAlbum"
                 android:background="@drawable/switch_button"
                 android:gravity="center_vertical"
                 android:paddingStart="22.5dp"
@@ -185,7 +185,7 @@
                 <TextView
                     android:textColor="#fff"
                     android:textSize="18sp"
-                    android:text="添加新的笔记本"
+                    android:text="添加新的相簿"
                     android:layout_marginStart="22.5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -198,27 +198,27 @@
                 android:paddingBottom="22.5dp">
 
                 <LinearLayout
-                    android:id="@+id/showAllNoteLayout"
+                    android:id="@+id/showAllImageLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:id="@+id/showAllNote"
+                        android:id="@+id/showAllImage"
                         android:textSize="18sp"
                         android:layout_width="225dp"
                         android:layout_height="45dp"
                         android:background="@drawable/button_style_yellow"
-                        android:text="所有笔记" />
+                        android:text="所有幻灯片" />
                 </LinearLayout>
 
 
                 <TextView
                     android:gravity="center"
-                    android:id="@+id/allNoteBadge"
+                    android:id="@+id/allImageBadge"
                     android:layout_width="33.75dp"
                     android:layout_height="31.5dp"
-                    android:layout_alignEnd="@+id/showAllNoteLayout"
-                    android:layout_alignBottom="@+id/showAllNoteLayout"
+                    android:layout_alignEnd="@+id/showAllImageLayout"
+                    android:layout_alignBottom="@+id/showAllImageLayout"
                     android:text="12"
                     android:background="@drawable/badge_style"
                     android:textSize="12sp" />

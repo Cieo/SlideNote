@@ -11,4 +11,6 @@
     <color name="subColor3">#000000</color>
     <color name="subColor4">#979797</color>
     <color name="subColor5">#FFC300</color>
+    <color name="black">#000</color>
+    <color name="darkGray">#212121</color>
 </resources>

@@ -1,298 +1,136 @@
 package com.example.cieo233.notetest;
 
-import android.app.Dialog;
-import android.content.Intent;
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.transitionseverywhere.AutoTransition;
-import com.transitionseverywhere.TransitionManager;
+import java.io.ByteArrayOutputStream;
 
-import java.util.Objects;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import tess4j.Test;
-import tess4j.application_activity;
-
-public class MainActivity extends AppCompatActivity implements Interfaces.OnImageFolderClickedListener, Interfaces.OnImageClickedListener, View.OnClickListener {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.drawerLayout)
-    DrawerLayout drawerLayout;
-    @BindView(R.id.contentRecyclerView)
-    RecyclerView contentRecyclerView;
-    @BindView(R.id.drawerRecyclerView)
-    RecyclerView drawerRecyclerView;
-    @BindView(R.id.showAllImage)
-    Button allImageButton;
-    @BindView(R.id.allImageBadge)
-    TextView allImageBadge;
-    @BindView(R.id.popUpMenu)
-    RelativeLayout popUpMenu;
-    @BindView(R.id.popUpMenuShare)
-    ImageView popUpMenuShare;
-    @BindView(R.id.popUpMenuDelete)
-    ImageView popUpMenuDelete;
-    @BindView(R.id.popUpMenuMoveTo)
-    TextView popUpMenuMoveTo;
-    @BindView(R.id.drawerLayoutContent)
-    RelativeLayout drawerLayoutContent;
-    @BindView(R.id.toolbarSelect)
-    TextView toolbarSelect;
-    @BindView(R.id.toolbarMenu)
-    ImageView toolbarMenu;
-    @BindView(R.id.jumpToNote)
-    LinearLayout jumpToNote;
-    @BindView(R.id.addNewAlbum)
-    LinearLayout addNewAlbum;
-
-
-    private boolean isSelectMode;
-    String currentShowingFolder;
-
-    private ImageContentRecyclerViewAdapter contentRecyclerViewAdapter;
-    private ImageDrawerRecyclerViewAdapter drawerRecyclerViewAdapter;
-    private SlideNoteDatabaseHelper slideNoteDatabaseHelper;
-    private Button highLightedDrawerButton;
-    private Dialog createNewFolderDialog;
-    private EditText createNewFolderEditText;
-    private TextView createNewFolderCheck;
-    private TextView createNewFolderCancel;
-
-
-    @Override
+/**
+ * Created by cky on 2017/2/11.
+ */
+public class MainActivity extends Activity implements Camera.PreviewCallback{
+    private CameraPreview mPreview;
+    private DrawView mDrawview;
+    private int LayoutWidth,LayoutHeight,PreviewWidth,PreviewHeight;
+    int [] result = {0,0,0,0,0,0,0,0};
+    PptTask mPptTask;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        init();
-        slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(this,"note",null,1);
-        GlobalStorage.getInstance().getImageFromContentProvider(this);
-        setToolbar();
-        setRecyclerView();
+        Button Btn_TakePicture = (Button) findViewById(R.id.Btn_TakePicture);
+        Btn_TakePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPreview.takePicture(result);
+            }
+        });
+        final LinearLayout Preview = (LinearLayout) findViewById(R.id.Preview);
+        ViewTreeObserver vto = Preview.getViewTreeObserver(); //获取屏幕预览宽度与高度
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                LayoutWidth = Preview.getMeasuredWidth();
+                LayoutHeight = Preview.getMeasuredHeight();
+              //  Log.i("debug1",LayoutWidth + " " + LayoutHeight);
+                return true;
+            }
+        });
     }
-
-
-    void notifyAllAdapterDataSetChange() {
-        drawerRecyclerViewAdapter.updateDateSet();
-        contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
-        allImageBadge.setText(GlobalStorage.getInstance().getImageFolderSize("allImage"));
-        Log.e("TestCurrentShowing",currentShowingFolder);
-        if (!Objects.equals(currentShowingFolder, "allImage")){
-            final int position = drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder);
-            drawerRecyclerView.scrollToPosition(position);
-            Handler handler = new Handler(new Handler.Callback() {
-                @Override
-                public boolean handleMessage(Message message) {
-                    clearHighLightBackground();
-                    ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(position);
-                    highLightedDrawerButton = myViewHolder.getButton();
-                    setHighLightBackground();
-                    return false;
-                }
-            });
-            handler.sendEmptyMessageDelayed(1,100);
-        } else {
-            clearHighLightBackground();
-            highLightedDrawerButton = allImageButton;
-            setHighLightBackground();
-        }
+    private void InitPreview() { //初始化预览
+        mPreview = (CameraPreview) findViewById(R.id.CameraPreview);
+        mDrawview = (DrawView) findViewById(R.id.DrawView);
+        mDrawview.setZOrderOnTop(true);
+        mPreview.mCamera.setPreviewCallback(this);
 
     }
-
-    void init() {
-        slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(this,"note",null,1);
-        currentShowingFolder = "allImage";
-        isSelectMode = false;
-        allImageButton.setOnClickListener(this);
-        popUpMenuDelete.setOnClickListener(this);
-        popUpMenuMoveTo.setOnClickListener(this);
-        jumpToNote.setOnClickListener(this);
-        addNewAlbum.setOnClickListener(this);
-        highLightedDrawerButton = (Button) findViewById(R.id.showAllImage);
-        GlobalStorage.getInstance().setHighLightedImageDrawerButton(-1);
+    protected  void onResume(){
+        super.onResume();
+        if(mPreview == null)
+            InitPreview();
     }
-
-    void setToolbar() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbarMenu.setOnClickListener(this);
-        toolbarSelect.setOnClickListener(this);
-    }
-
-    void setRecyclerView() {
-        contentRecyclerViewAdapter = new ImageContentRecyclerViewAdapter(this);
-        contentRecyclerViewAdapter.setOnImageClickedListener(this);
-        contentRecyclerViewAdapter.setImageFolder("allImage");
-        drawerRecyclerViewAdapter = new ImageDrawerRecyclerViewAdapter(this);
-        drawerRecyclerViewAdapter.setOnImageFolderClickedListener(this);
-        drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        drawerRecyclerView.setAdapter(drawerRecyclerViewAdapter);
-        contentRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        contentRecyclerView.setAdapter(contentRecyclerViewAdapter);
-        allImageBadge.setText(GlobalStorage.getInstance().getImageFolderSize("allImage"));
-    }
-
-
-    @Override
-    public void onFolderClicked(ImageFolder clickedFolder, Button button) {
-        currentShowingFolder = clickedFolder.getFolderName();
-        contentRecyclerViewAdapter.setImageFolder(clickedFolder.getFolderName());
-        contentRecyclerViewAdapter.notifyDataSetChanged();
-        drawerLayout.closeDrawer(GravityCompat.START);
-        clearHighLightBackground();
-        highLightedDrawerButton = button;
-        setHighLightBackground();
+    protected  void onPause(){
+        super.onPause();
     }
 
     @Override
-    public void onImageClicked(ImageInfo clickedImageInfo, View checkBox) {
-        if (!isSelectMode) {
-            Intent intent = new Intent(this,PhotoDetailActivity.class);
-            intent.putExtra("imageURL",clickedImageInfo.getImageURL());
-            intent.putExtra("currentShowingFolder", currentShowingFolder);
-            intent.putExtra("currentPosition",GlobalStorage.getInstance().getImageFolder(currentShowingFolder).indexOf(clickedImageInfo));
-            Log.e("index", String.valueOf(GlobalStorage.getInstance().getImageFolder(currentShowingFolder).indexOf(clickedImageInfo)));
-            startActivity(intent);
-
-        } else {
-            if (checkBox.getVisibility() == View.VISIBLE) {
-                checkBox.setVisibility(View.GONE);
-                GlobalStorage.getInstance().getSelectedImageInfo().remove(clickedImageInfo);
-                GlobalStorage.getInstance().getSelectedImageViewCheckBox().remove(checkBox);
-            } else {
-                checkBox.setVisibility(View.VISIBLE);
-                GlobalStorage.getInstance().getSelectedImageInfo().add(clickedImageInfo);
-                GlobalStorage.getInstance().getSelectedImageViewCheckBox().add(checkBox);
+    public void onPreviewFrame(byte[] data, Camera camera) {
+        if(null != mPptTask){
+            switch(mPptTask.getStatus()){
+                case RUNNING:
+                    return;
+                case PENDING:
+                    mPptTask.cancel(false);
+                    break;
             }
         }
 
+        mPptTask = new PptTask(data);
+        mPptTask.execute((Void)null);
     }
 
-    void clearHighLightBackground(){
-        if (highLightedDrawerButton == null){
-            Log.e("ClearHighLight","there is a null");
-            return;
+    private class PptTask extends AsyncTask<Void, Void, Void> {
+
+        private byte[] mData;
+        //构造函数
+        PptTask(byte[] data){
+            this.mData = data;
         }
-        highLightedDrawerButton.setBackgroundResource(R.drawable.button_style_white);
-    }
 
-    void setHighLightBackground(){
-        if (highLightedDrawerButton == null){
-            return;
+        @Override
+        protected Void doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+            Camera.Size size = mPreview.mCamera.getParameters().getPreviewSize(); //获取预览大小
+            PreviewWidth = size.width;  //宽度
+            PreviewHeight = size.height;
+            Log.i("debug1",PreviewWidth + " " + PreviewHeight);
+           // Log.i("debug1","识别");
+            final YuvImage image = new YuvImage(mData, ImageFormat.NV21, PreviewWidth, PreviewHeight, null);
+            ByteArrayOutputStream os = new ByteArrayOutputStream(mData.length);
+            if(!image.compressToJpeg(new Rect(0, 0, PreviewWidth, PreviewHeight), 100, os)){
+                return null;
+            }
+            byte[] tmp = os.toByteArray();
+            Bitmap bmp = BitmapFactory.decodeByteArray(tmp, 0,tmp.length);
+            PPtdetection(bmp);
+            return null;
         }
-        highLightedDrawerButton.setBackgroundResource(R.drawable.button_style_yellow);
-    }
-
-    void showDialog(){
-        createNewFolderDialog = new Dialog(this);
-        createNewFolderDialog.setCancelable(true);
-        createNewFolderDialog.setContentView(R.layout.add_one_dialog);
-        createNewFolderDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        createNewFolderDialog.getWindow().setDimAmount(0.4f);
-        createNewFolderEditText = (EditText) createNewFolderDialog.findViewById(R.id.inputNewFolderName);
-        createNewFolderCheck = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCheck);
-        createNewFolderCancel = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCancel);
-        createNewFolderCheck.setOnClickListener(this);
-        createNewFolderCancel.setOnClickListener(this);
-        createNewFolderDialog.show();
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.showAllImage:
-                currentShowingFolder = "allImage";
-                contentRecyclerViewAdapter.setImageFolder(currentShowingFolder);
-                contentRecyclerViewAdapter.notifyDataSetChanged();
-                drawerLayout.closeDrawer(GravityCompat.START);
-                clearHighLightBackground();
-                highLightedDrawerButton = (Button) findViewById(R.id.showAllImage);
-                GlobalStorage.getInstance().setHighLightedImageDrawerButton(-1);
-                setHighLightBackground();
-                break;
-            case R.id.popUpMenuDelete:
-                GlobalStorage.getInstance().deleteSelectedImage(getApplicationContext());
-                isSelectMode = !isSelectMode;
-                popUpMenu.setVisibility(View.GONE);
-                toolbarSelect.setText("选择");
-                notifyAllAdapterDataSetChange();
-                break;
-            case R.id.toolbarSelect:
-                isSelectMode = !isSelectMode;
-                AutoTransition autoTransition = new AutoTransition();
-                autoTransition.setDuration(100);
-                if (isSelectMode) {
-                    toolbarSelect.setText("取消");
-                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
-                    popUpMenu.setVisibility(View.VISIBLE);
-                } else {
-                    toolbarSelect.setText("选择");
-                    for (View checkBox : GlobalStorage.getInstance().getSelectedImageViewCheckBox()) {
-                        checkBox.setVisibility(View.GONE);
-                    }
-                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
-                    popUpMenu.setVisibility(View.GONE);
-                    GlobalStorage.getInstance().clearSelectedImage();
-                }
-                break;
-            case R.id.toolbarMenu:
-                drawerLayout.openDrawer(GravityCompat.START);
-                break;
-            case R.id.jumpToNote:
-                Intent intent = new Intent(this,NoteListActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.addNewAlbum:
-                showDialog();
-                break;
-            case R.id.createNewFolderCheck:
-                String folderName = createNewFolderEditText.getText().toString();
-                if (!folderName.isEmpty()){
-                    slideNoteDatabaseHelper.createImageFolder(folderName);
-                    GlobalStorage.getInstance().getImageFromContentProvider(this);
-                    currentShowingFolder = folderName;
-                    contentRecyclerViewAdapter.setImageFolder(currentShowingFolder);
-                    notifyAllAdapterDataSetChange();
-                    createNewFolderDialog.dismiss();
-                }
-                break;
-            case R.id.popUpMenuMoveTo:
-                if (GlobalStorage.getInstance().getSelectedImageInfo().size() > 0){
-                    Intent moveToIntent = new Intent(this,MoveToActivity.class);
-                    startActivityForResult(moveToIntent,1);
-                }
-                break;
-            case R.id.createNewFolderCancel:
-                createNewFolderDialog.dismiss();
-                break;
+        void  trans(int[] point,int[] data){
+            for(int i = 0;i < 4;i ++){
+                point[i * 2] = data[i * 2];
+                point[i * 2 + 1] = PreviewHeight - data[i * 2 +1];
+            }
         }
-    }
+        public int[] PPtdetection(Bitmap bitmap){
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case 1:
-                notifyAllAdapterDataSetChange();
-                toolbarSelect.callOnClick();
-                break;
+            int w = bitmap.getWidth(), h = bitmap.getHeight();
+            int[] pix = new int[w * h];
+          //  Log.i("kaychen",w + "," + h);
+            bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+            int []solvepoint = {0,0,0,0,0,0,0,0};
+            OpenCVHelper.Checkedge(pix,result,w,h);
+            trans(solvepoint,result);
+
+            for(int i = 0;i < 4;++i){
+                Log.i("kaychen",result[i* 2] + "," + result[i * 2+1]  + " " + solvepoint[i* 2] + "," + solvepoint[i * 2+1]);
+            }
+            for(int i =0 ;i < 8;++i){ //画框
+                if(result[i] != 0){
+                    mDrawview.drawLine(solvepoint);
+                }
+            }
+            return result;
         }
     }
 }

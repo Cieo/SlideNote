@@ -2,4 +2,7 @@
     <string name="app_name">notetest</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer close</string>
+    <string name="button_settings">设置</string>
+    <string name="button_capture_photo">拍照</string>
+    <string name="button_capture_video">录像</string>
 </resources>

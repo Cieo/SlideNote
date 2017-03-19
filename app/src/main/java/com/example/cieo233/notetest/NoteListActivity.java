@@ -305,7 +305,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.jumpToSlide:
-                Intent intent = new Intent(this,MainActivity.class);
+                Intent intent = new Intent(this,ImageListActivity.class);
                 startActivity(intent);
                 break;
             case R.id.popUpMenuShare:

@@ -235,7 +235,7 @@ public class PdfViewer extends AppCompatActivity implements OnPageChangeListener
 
     @Override
     public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage) {
-        // Toast.makeText( MainActivity.this ,  "pageWidth= " + pageWidth + "
+        // Toast.makeText( ImageListActivity.this ,  "pageWidth= " + pageWidth + "
         // pageHeight= " + pageHeight + " displayedPage="  + displayedPage , Toast.LENGTH_SHORT).show();
     }
 }
