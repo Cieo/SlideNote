@@ -9,6 +9,7 @@ import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -21,6 +22,7 @@ import java.io.ByteArrayOutputStream;
  * Created by cky on 2017/2/11.
  */
 public class MainActivity extends Activity implements Camera.PreviewCallback{
+    private static final String TAG = "MainActivity";
     private CameraPreview mPreview;
     private DrawView mDrawview;
     private int LayoutWidth,LayoutHeight,PreviewWidth,PreviewHeight;

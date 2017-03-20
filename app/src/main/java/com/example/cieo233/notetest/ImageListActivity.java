@@ -85,6 +85,9 @@ public class ImageListActivity extends AppCompatActivity implements Interfaces.O
         GlobalStorage.getInstance().getImageFromContentProvider(this);
         setToolbar();
         setRecyclerView();
+
+//        TessTwo.prepareTessData(this,getFilesDir().getAbsolutePath()+"/TessSamples/");
+//        TessTwo.getInstance().doOCR(GlobalStorage.getInstance().getImageFolder("Screenshots").get(0).getImageURL(),"chi_sim");
     }
 
 

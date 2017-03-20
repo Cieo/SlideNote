@@ -24,14 +24,14 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ImageListActivity"
-            android:launchMode="singleInstance"></activity>
+            android:launchMode="singleInstance">
+        </activity>
         <activity
             android:name=".PhotoDetailActivity"
             android:launchMode="singleInstance" />
         <activity
             android:name=".NoteListActivity"
             android:launchMode="singleInstance">
-
         </activity>
         <activity
             android:name=".MoveToActivity"

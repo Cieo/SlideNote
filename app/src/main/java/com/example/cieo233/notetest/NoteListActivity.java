@@ -93,6 +93,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         setDialog();
         setToolbar();
         setRecyclerView();
+
     }
 
 
