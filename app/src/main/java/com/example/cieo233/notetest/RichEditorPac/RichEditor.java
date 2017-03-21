@@ -1,4 +1,4 @@
-package com.example.cieo233.notetest.RichEditorPac;
+package com.example.tigerbea.notemain.RichEditorPac;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,7 +13,6 @@ import android.view.Gravity;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -54,6 +53,9 @@ public class RichEditor extends WebView {
   public void setDate(String dateString){
     mDate = dateString;
     exec("javascript:RE.setDate('" + mDate + "');");
+  }
+  public void setEditorContents(String contents){
+    exec("javascript:RE.setEditorContents('"+contents+"');");
   }
 
   // 得到title的value，用.GetTitle(TitleContent)传出去
