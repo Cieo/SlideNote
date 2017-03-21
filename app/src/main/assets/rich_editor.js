@@ -166,6 +166,11 @@ RE.getDateContents = function(){
 }
 
 /***************************  接口END  ******************************/
+
+/*******************************  设置    *****************************/
+RE.setEditorContents = function(contents){
+    RE.editor.innerHTML = contents;
+}
 RE.setTitle = function(contents){
     $('#title').text(contents);
 }
