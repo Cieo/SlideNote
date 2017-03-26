@@ -157,15 +157,21 @@ document.addEventListener("selectionchange", function() { RE.backuprange(); });
 RE.getTitleContents = function(){
     window.imageListener.setTitleContents(document.getElementById('title').innerText);
 }
-
 RE.getHTMLContents = function(){
     window.imageListener.setHTMLContents(document.getElementsByTagName('html')[0].innerHTML);
 }
 RE.getDateContents = function(){
     window.imageListener.setDateContents(document.getElementById('createDate').innerText);
 }
-
+RE.getEditorContents = function(){
+	window.imageListener.setEditorContents(RE.editor.innerHTML);
+}
 /***************************  接口END  ******************************/
+
+/*******************************  设置    *****************************/
+RE.setEditorContents = function(contents){
+    RE.editor.innerHTML = contents;
+}
 RE.setTitle = function(contents){
     $('#title').text(contents);
 }

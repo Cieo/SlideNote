@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-
 import com.example.cieo233.notetest.DrawableImageView.DrawOperation;
 import com.example.cieo233.notetest.DrawableImageView.DrawableImageView;
 import com.example.cieo233.notetest.RichEditorPac.RichEditor;
@@ -39,7 +38,7 @@ public class NoteRichEditor extends AppCompatActivity implements View.OnTouchLis
     private static final int WIDTH_ERASE = 30;
     private Context Activity_context;
 
-//    private static final String ALBUM_PATH = "file:///android_asset/";
+    //    private static final String ALBUM_PATH = "file:///android_asset/";
     private static final String ALBUM_PATH = Environment.getExternalStorageDirectory() + "/download_test/";
     private static final String OUTPUT_JPG = "Note_editor.jpg";
     private String mPicFileName;
@@ -616,14 +615,15 @@ public class NoteRichEditor extends AppCompatActivity implements View.OnTouchLis
     private String HTMLContents;
     private String TitleContents;
     private String DateContents;
+    private String EditorContents;
 
     @android.webkit.JavascriptInterface
     public void setHTMLContents(final String str){
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
-                HTMLContents = str;
-                System.out.println("网页内容js：" + str);
+        HTMLContents = str;
+        System.out.println("网页内容js：" + str);
 //            }
 //        });
     }
@@ -633,8 +633,8 @@ public class NoteRichEditor extends AppCompatActivity implements View.OnTouchLis
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
-                TitleContents = str;
-                System.out.println("网页标题js："+str);
+        TitleContents = str;
+        System.out.println("网页标题js："+str);
 //            }
 //        });
     }
@@ -644,12 +644,23 @@ public class NoteRichEditor extends AppCompatActivity implements View.OnTouchLis
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
-                DateContents = str;
-                System.out.println("网页时间js："+str);
+        DateContents = str;
+        System.out.println("网页时间js："+str);
 //            }
 //        });
     }
 
+    @android.webkit.JavascriptInterface
+    public void setEditorContents(final String str){
+        EditorContents = str;
+    }
+
+    /******************** 接口函数 ******************/
+    public String getEditorContents(){
+        mEditor.load("javascript:RE.getEditorContents();");
+        return EditorContents;
+
+    }
     public String getHTMLContents(){
         mEditor.loadUrl("javascript:RE.getHTMLContents();");
         HTMLContents = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\">\n" + HTMLContents;
